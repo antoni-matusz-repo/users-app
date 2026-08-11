@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import styles from "./page.module.css";
 
 export default function Home() {
@@ -35,6 +36,9 @@ export default function Home() {
               Learning
             </a>{" "}
             center.
+          </p>
+          <p>
+            <Link href="/users">Lista użytkowników &rarr;</Link>
           </p>
         </div>
         <div className={styles.ctas}>
