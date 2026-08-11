@@ -1,10 +1,9 @@
 import Link from "next/link";
-import { prisma } from "@/lib/prisma";
+import { getUsers } from "@/lib/users";
+import { UsersTable } from "@/components/UsersTable";
 
 export default async function UsersPage() {
-  const users = await prisma.user.findMany({
-    orderBy: { createdAt: "desc" },
-  });
+  const users = await getUsers();
 
   return (
     <main>
@@ -12,28 +11,7 @@ export default async function UsersPage() {
       <p>
         <Link href="/">&larr; Strona główna</Link>
       </p>
-      {users.length === 0 ? (
-        <p>Brak użytkowników.</p>
-      ) : (
-        <table>
-          <thead>
-            <tr>
-              <th>Email</th>
-              <th>Nazwa</th>
-              <th>Data utworzenia</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map((user) => (
-              <tr key={user.id}>
-                <td>{user.email}</td>
-                <td>{user.name}</td>
-                <td>{user.createdAt.toLocaleString("pl-PL")}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+      <UsersTable users={users} />
     </main>
   );
 }
