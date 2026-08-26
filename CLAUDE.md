@@ -66,3 +66,11 @@ users-app/
 ├── tsconfig.json
 └── CLAUDE.md
 ```
+
+## Produkcja
+
+- **Aplikacja**: https://users-app-gamma-seven.vercel.app/ — hostowana na Vercel, spięta z repo `antoni-matusz-repo/users-app`, deployuje branch `main`
+- **Baza danych**: Neon (Postgres), projekt `users-app` (ID: `patient-sunset-72632225`), organizacja `Antoni` (ID: `org-misty-meadow-12787184`), branch `production`
+- **Build na Vercel**: skrypt `vercel-build` w `package.json` — `prisma generate` → `scripts/migrate-deploy.mjs` (migracje przez bezpośrednie połączenie) → `next build`
+- **Zmienne środowiskowe w Vercel**: `DATABASE_URL` (pooled, runtime aplikacji), `DATABASE_URL_UNPOOLED` (bezpośrednie, tylko do migracji)
+- Workspace lokalnie połączony z projektem Neon przez `neon link` (plik `.neon`, gitignored) — CLI/MCP Neona skonfigurowane przez skille `neon`/`neon-postgres` (`.agents/skills/`)
