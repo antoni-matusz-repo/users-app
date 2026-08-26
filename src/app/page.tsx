@@ -1,72 +1,81 @@
 import Image from "next/image";
 import Link from "next/link";
-import styles from "./page.module.css";
+import { SiteHeader } from "@/components/SiteHeader";
+import { buttonVariants } from "@/components/ui/button";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+
+const slides = [
+  {
+    src: "/landing/office-workspace.jpg",
+    alt: "Nowoczesne biuro typu open space z zespołem przy pracy",
+  },
+  {
+    src: "/landing/team-collaboration.jpg",
+    alt: "Zespół omawiający projekt przy stole",
+  },
+  {
+    src: "/landing/technology-workspace.jpg",
+    alt: "Laptop i kawa na drewnianym biurku",
+  },
+  {
+    src: "/landing/leadership-meeting.jpg",
+    alt: "Prezentacja podczas spotkania zespołu",
+  },
+];
 
 export default function Home() {
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>
-            To get started, edit the <code className={styles.code}>page.tsx</code> file.
+    <>
+      <SiteHeader />
+      <main>
+        <section className="mx-auto flex max-w-6xl flex-col items-center gap-6 px-6 py-16 text-center sm:py-24">
+          <h1 className="text-4xl font-semibold tracking-tight text-balance sm:text-5xl">
+            System do zarządzania użytkownikami
           </h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="max-w-2xl text-lg text-muted-foreground text-balance">
+            Rejestracja, role i uprawnienia, panel administracyjny — wszystko w jednym miejscu.
+            Zarządzaj kontami swojego zespołu szybko i bez chaosu w arkuszach kalkulacyjnych.
           </p>
-          <p>
-            <Link href="/users">Lista użytkowników &rarr;</Link>
-          </p>
-        </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <Link href="/register" className={buttonVariants({ size: "lg" })}>
+              Zarejestruj się
+            </Link>
+            <Link href="/users" className={buttonVariants({ variant: "outline", size: "lg" })}>
+              Zobacz demo
+            </Link>
+          </div>
+        </section>
+
+        <section className="mx-auto max-w-4xl px-6 pb-16 sm:pb-24">
+          <Carousel className="w-full">
+            <CarouselContent>
+              {slides.map((slide) => (
+                <CarouselItem key={slide.src}>
+                  <div className="overflow-hidden rounded-xl border">
+                    <Image
+                      src={slide.src}
+                      alt={slide.alt}
+                      width={1600}
+                      height={1067}
+                      className="aspect-video w-full object-cover"
+                      sizes="(min-width: 896px) 896px, 100vw"
+                      priority={slide === slides[0]}
+                    />
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious className="hidden sm:flex" />
+            <CarouselNext className="hidden sm:flex" />
+          </Carousel>
+        </section>
       </main>
-    </div>
+    </>
   );
 }
