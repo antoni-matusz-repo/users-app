@@ -5,3 +5,5 @@ build
 coverage
 pnpm-lock.yaml
 public
+.agents
+.claude/skills
