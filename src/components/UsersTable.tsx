@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export type UserRow = {
   id: string;
   email: string;
@@ -17,6 +19,7 @@ export function UsersTable({ users }: { users: UserRow[] }) {
           <th>Email</th>
           <th>Nazwa</th>
           <th>Data utworzenia</th>
+          <th>Akcje</th>
         </tr>
       </thead>
       <tbody>
@@ -25,6 +28,9 @@ export function UsersTable({ users }: { users: UserRow[] }) {
             <td>{user.email}</td>
             <td>{user.name}</td>
             <td>{user.createdAt.toLocaleString("pl-PL")}</td>
+            <td>
+              <Link href={`/users/${user.id}/edit`}>Edytuj</Link>
+            </td>
           </tr>
         ))}
       </tbody>

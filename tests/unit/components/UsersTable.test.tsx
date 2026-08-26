@@ -26,6 +26,11 @@ describe("UsersTable", () => {
     expect(screen.getByText("alice@example.com")).toBeInTheDocument();
     expect(screen.getByText("bob@example.com")).toBeInTheDocument();
     expect(screen.getAllByRole("row")).toHaveLength(3);
+    expect(screen.getAllByRole("link", { name: "Edytuj" })).toHaveLength(2);
+    expect(screen.getAllByRole("link", { name: "Edytuj" })[0]).toHaveAttribute(
+      "href",
+      "/users/1/edit",
+    );
   });
 
   it("pokazuje komunikat, gdy lista użytkowników jest pusta", () => {
