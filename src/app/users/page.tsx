@@ -15,6 +15,9 @@ export default async function UsersPage() {
       <p>
         <Link href="/">&larr; Strona główna</Link>
       </p>
+      <p>
+        <Link href="/users/new">Dodaj użytkownika</Link>
+      </p>
       <UsersTable users={users} />
     </main>
   );
