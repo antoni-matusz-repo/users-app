@@ -10,7 +10,8 @@
     "typecheck": "tsc --noEmit",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "test": "vitest run"
+    "test": "vitest run",
+    "vercel-build": "prisma generate && node scripts/migrate-deploy.mjs && next build"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.9.1",
