@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getUsers } from "@/lib/users";
 import { UsersTable } from "@/components/UsersTable";
+import { buttonVariants } from "@/components/ui/button";
 
 // Lista użytkowników ma pokazywać aktualny stan bazy przy każdym żądaniu,
 // a nie zrzut z momentu builda.
@@ -10,14 +11,18 @@ export default async function UsersPage() {
   const users = await getUsers();
 
   return (
-    <main>
-      <h1>Użytkownicy</h1>
-      <p>
-        <Link href="/">&larr; Strona główna</Link>
-      </p>
-      <p>
-        <Link href="/users/new">Dodaj użytkownika</Link>
-      </p>
+    <main className="mx-auto flex max-w-4xl flex-col gap-6 p-6 sm:p-10">
+      <div className="flex flex-col gap-1">
+        <Link href="/" className="text-sm text-muted-foreground hover:text-foreground">
+          &larr; Strona główna
+        </Link>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <h1 className="text-2xl font-semibold tracking-tight">Użytkownicy</h1>
+          <Link href="/users/new" className={buttonVariants({ className: "self-start" })}>
+            Dodaj użytkownika
+          </Link>
+        </div>
+      </div>
       <UsersTable users={users} />
     </main>
   );

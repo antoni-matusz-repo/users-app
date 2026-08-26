@@ -7,14 +7,14 @@ vi.mock("@/server/users", () => ({
   deleteUser: vi.fn().mockResolvedValue({}),
 }));
 
-const confirmationText = /Czy na pewno chcesz usunąć użytkownika/;
+const confirmationText = /Usunąć użytkownika/;
 
 describe("DeleteUserButton", () => {
   it("nie pokazuje dialogu potwierdzenia od razu po renderze", () => {
     render(<DeleteUserButton id="1" name="Alice" />);
 
     expect(screen.getByRole("button", { name: "Usuń" })).toBeInTheDocument();
-    expect(screen.getByText(confirmationText)).not.toBeVisible();
+    expect(screen.queryByText(confirmationText)).not.toBeInTheDocument();
   });
 
   it("otwiera dialog z potwierdzeniem po kliknięciu Usuń", async () => {
@@ -23,7 +23,7 @@ describe("DeleteUserButton", () => {
 
     await user.click(screen.getByRole("button", { name: "Usuń" }));
 
-    expect(screen.getByText(confirmationText)).toBeVisible();
+    expect(await screen.findByText(confirmationText)).toBeVisible();
     expect(screen.getByRole("button", { name: "Anuluj" })).toBeVisible();
     expect(screen.getByRole("button", { name: "Tak, usuń" })).toBeVisible();
   });
@@ -34,9 +34,10 @@ describe("DeleteUserButton", () => {
     render(<DeleteUserButton id="1" name="Alice" />);
 
     await user.click(screen.getByRole("button", { name: "Usuń" }));
+    await screen.findByText(confirmationText);
     await user.click(screen.getByRole("button", { name: "Anuluj" }));
 
-    expect(screen.getByText(confirmationText)).not.toBeVisible();
+    expect(screen.queryByText(confirmationText)).not.toBeInTheDocument();
     expect(deleteUser).not.toHaveBeenCalled();
   });
 });

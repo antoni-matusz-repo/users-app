@@ -2,6 +2,9 @@
 
 import { useActionState } from "react";
 import type { ActionState } from "@/lib/validation/user";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 type UserFormProps = {
   action: (prevState: ActionState, formData: FormData) => Promise<ActionState>;
@@ -13,23 +16,47 @@ export function UserForm({ action, defaultValues, submitLabel = "Dodaj" }: UserF
   const [state, formAction, isPending] = useActionState(action, {});
 
   return (
-    <form action={formAction}>
-      <div>
-        <label htmlFor="email">Email</label>
-        <br />
-        <input id="email" name="email" type="email" defaultValue={defaultValues?.email} required />
-        {state.fieldErrors?.email && <p role="alert">{state.fieldErrors.email}</p>}
+    <form action={formAction} className="grid max-w-sm gap-4">
+      <div className="grid gap-1.5">
+        <Label htmlFor="email">Email</Label>
+        <Input
+          id="email"
+          name="email"
+          type="email"
+          defaultValue={defaultValues?.email}
+          aria-invalid={Boolean(state.fieldErrors?.email)}
+          required
+        />
+        {state.fieldErrors?.email && (
+          <p role="alert" className="text-sm text-destructive">
+            {state.fieldErrors.email}
+          </p>
+        )}
       </div>
-      <div>
-        <label htmlFor="name">Nazwa</label>
-        <br />
-        <input id="name" name="name" type="text" defaultValue={defaultValues?.name} required />
-        {state.fieldErrors?.name && <p role="alert">{state.fieldErrors.name}</p>}
+      <div className="grid gap-1.5">
+        <Label htmlFor="name">Nazwa</Label>
+        <Input
+          id="name"
+          name="name"
+          type="text"
+          defaultValue={defaultValues?.name}
+          aria-invalid={Boolean(state.fieldErrors?.name)}
+          required
+        />
+        {state.fieldErrors?.name && (
+          <p role="alert" className="text-sm text-destructive">
+            {state.fieldErrors.name}
+          </p>
+        )}
       </div>
-      {state.error && <p role="alert">{state.error}</p>}
-      <button type="submit" disabled={isPending}>
+      {state.error && (
+        <p role="alert" className="text-sm text-destructive">
+          {state.error}
+        </p>
+      )}
+      <Button type="submit" disabled={isPending} className="justify-self-start">
         {isPending ? "Zapisywanie…" : submitLabel}
-      </button>
+      </Button>
     </form>
   );
 }

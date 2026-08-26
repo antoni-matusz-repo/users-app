@@ -13,11 +13,13 @@ export default async function EditUserPage({ params }: PageProps<"/users/[id]/ed
   }
 
   return (
-    <main>
-      <h1>Edytuj użytkownika</h1>
-      <p>
-        <Link href="/users">&larr; Lista użytkowników</Link>
-      </p>
+    <main className="mx-auto flex max-w-4xl flex-col gap-6 p-6 sm:p-10">
+      <div className="flex flex-col gap-1">
+        <Link href="/users" className="text-sm text-muted-foreground hover:text-foreground">
+          &larr; Lista użytkowników
+        </Link>
+        <h1 className="text-2xl font-semibold tracking-tight">Edytuj użytkownika</h1>
+      </div>
       <UserForm
         action={updateUser.bind(null, user.id)}
         defaultValues={{ email: user.email, name: user.name }}
