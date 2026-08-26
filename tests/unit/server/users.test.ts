@@ -1,7 +1,7 @@
 import { afterAll, beforeEach, describe, expect, it } from "vitest";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@/generated/prisma/client";
-import { createUserWith, updateUserWith } from "@/server/users";
+import { createUserWith, deleteUserWith, updateUserWith } from "@/server/users";
 
 const adapter = new PrismaPg({ connectionString: process.env.TEST_DATABASE_URL });
 const testPrisma = new PrismaClient({ adapter });
@@ -168,5 +168,46 @@ describe("updateUserWith", () => {
     );
 
     expect(result.error).toBe("Ten użytkownik już nie istnieje (mógł zostać usunięty).");
+  });
+});
+
+describe("deleteUserWith", () => {
+  beforeEach(async () => {
+    await testPrisma.user.deleteMany();
+  });
+
+  afterAll(async () => {
+    await testPrisma.user.deleteMany();
+    await testPrisma.$disconnect();
+  });
+
+  it("usuwa istniejącego użytkownika", async () => {
+    const user = await testPrisma.user.create({
+      data: { email: "alice@example.com", name: "Alice" },
+    });
+
+    const result = await deleteUserWith(testPrisma, user.id);
+
+    expect(result).toEqual({});
+    expect(await testPrisma.user.count()).toBe(0);
+  });
+
+  it("zwraca czytelny błąd przy próbie usunięcia już nieistniejącego użytkownika, nie crashuje", async () => {
+    const result = await deleteUserWith(testPrisma, "nieistniejace-id");
+
+    expect(result.error).toBe("Ten użytkownik już nie istnieje (mógł zostać usunięty wcześniej).");
+  });
+
+  it("nie rusza innych rekordów przy usuwaniu jednego użytkownika", async () => {
+    const alice = await testPrisma.user.create({
+      data: { email: "alice@example.com", name: "Alice" },
+    });
+    await testPrisma.user.create({ data: { email: "bob@example.com", name: "Bob" } });
+
+    await deleteUserWith(testPrisma, alice.id);
+
+    const remaining = await testPrisma.user.findMany();
+    expect(remaining).toHaveLength(1);
+    expect(remaining[0].email).toBe("bob@example.com");
   });
 });

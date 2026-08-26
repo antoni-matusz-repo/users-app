@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { DeleteUserButton } from "@/components/DeleteUserButton";
 
 export type UserRow = {
   id: string;
@@ -29,7 +30,8 @@ export function UsersTable({ users }: { users: UserRow[] }) {
             <td>{user.name}</td>
             <td>{user.createdAt.toLocaleString("pl-PL")}</td>
             <td>
-              <Link href={`/users/${user.id}/edit`}>Edytuj</Link>
+              <Link href={`/users/${user.id}/edit`}>Edytuj</Link>{" "}
+              <DeleteUserButton id={user.id} name={user.name} />
             </td>
           </tr>
         ))}

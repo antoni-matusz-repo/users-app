@@ -102,3 +102,33 @@ export async function updateUser(
   revalidatePath("/users");
   redirect("/users");
 }
+
+export async function deleteUserWith(
+  client: Pick<PrismaClient, "user">,
+  id: string,
+): Promise<ActionState> {
+  try {
+    await client.user.delete({ where: { id } });
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025") {
+      return { error: "Ten użytkownik już nie istnieje (mógł zostać usunięty wcześniej)." };
+    }
+    throw error;
+  }
+
+  return {};
+}
+
+export async function deleteUser(
+  id: string,
+  _prevState: ActionState,
+  _formData: FormData,
+): Promise<ActionState> {
+  const result = await deleteUserWith(prisma, id);
+  if (result.error) {
+    return result;
+  }
+
+  revalidatePath("/users");
+  return {};
+}
