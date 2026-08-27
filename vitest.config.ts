@@ -10,5 +10,11 @@ export default defineConfig({
     setupFiles: ["./vitest.setup.ts"],
     include: ["tests/unit/**/*.test.{ts,tsx}"],
     globalSetup: ["./tests/unit/global-setup.ts"],
+    // Testy integracyjne współdzielą jedną bazę testową i czyszczą ją przez
+    // deleteMany() w beforeEach — przy równoległych plikach to wyścig
+    // (np. jeden plik kasuje User, gdy drugi w tym momencie tworzy powiązany
+    // wiersz Account, co łamie klucz obcy). Prościej wyłączyć równoległość
+    // plików niż izolować każdy plik osobnym schematem/bazą.
+    fileParallelism: false,
   },
 });
