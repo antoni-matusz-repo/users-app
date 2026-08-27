@@ -1,19 +1,19 @@
 import Link from "next/link";
 import { SiteHeader } from "@/components/SiteHeader";
-import { buttonVariants } from "@/components/ui/button";
+import { LoginForm } from "@/components/LoginForm";
 
 export default function LoginPage() {
   return (
     <>
       <SiteHeader />
-      <main className="mx-auto flex max-w-md flex-col items-center gap-4 px-6 py-24 text-center">
-        <h1 className="text-2xl font-semibold tracking-tight">Logowanie — wkrótce</h1>
-        <p className="text-muted-foreground">
-          Logowanie jest jeszcze w przygotowaniu. Wróć tutaj wkrótce.
-        </p>
-        <Link href="/" className={buttonVariants({ variant: "outline" })}>
-          &larr; Wróć na stronę główną
-        </Link>
+      <main className="mx-auto flex max-w-4xl flex-col gap-6 p-6 sm:p-10">
+        <div className="flex flex-col gap-1">
+          <Link href="/" className="text-sm text-muted-foreground hover:text-foreground">
+            &larr; Strona główna
+          </Link>
+          <h1 className="text-2xl font-semibold tracking-tight">Zaloguj się</h1>
+        </div>
+        <LoginForm />
       </main>
     </>
   );
