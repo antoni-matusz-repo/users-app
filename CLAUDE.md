@@ -34,6 +34,11 @@ Wersje pakietów trzymamy na bieżąco jako "najnowsze stabilne" — przy dodawa
   - drop/reset bazy danych, nieodwracalne migracje
   - `git push --force`, `git reset --hard`, usuwanie branchy
   - usuwanie plików/danych, nadpisywanie niezacommitowanych zmian
+- **Baza produkcyjna (Neon, branch `production`) — twarda zasada, nie "pytaj przed":**
+  - NIGDY nie usuwaj z niej żadnych danych (bez wyjątków, nawet jeśli wydaje się to bezpieczne albo pomocne w debugowaniu)
+  - NIGDY jej nie seeduj danymi demo/testowymi
+  - Dozwolone bez pytania: migracje schematu (`prisma migrate deploy` w ramach `vercel-build`) i inne zmiany struktury
+  - Zmiany w danych produkcyjnych: tylko jako propozycja do mojej wyraźnej akceptacji, nigdy samodzielnie
 - Preferuj rozwiązania proste i czytelne nad "sprytne" — to projekt edukacyjny, priorytetem jest zrozumiałość
 - Przy dodawaniu lub zmianie zmiennej środowiskowej/sekretu (nowa integracja, nowy provider itp.): zawsze (1) zaktualizuj `.env.example`, (2) zaktualizuj listę w sekcji „Produkcja" poniżej, (3) napisz mi wprost co i gdzie mam zrobić w panelu Vercela — nazwa zmiennej, wartość (albo skąd ją wziąć), które środowisko (Production/Preview/Development), i czy potrzebny jest ręczny redeploy (dodanie zmiennej w Vercelu samo z siebie NIE odpala redeploya)
 
