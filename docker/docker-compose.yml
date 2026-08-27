@@ -13,5 +13,13 @@ services:
       - db-data:/var/lib/postgresql/data
       - ./init:/docker-entrypoint-initdb.d:ro
 
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: users-app-mailpit
+    restart: unless-stopped
+    ports:
+      - "8025:8025" # UI: http://localhost:8025
+      - "1025:1025" # SMTP
+
 volumes:
   db-data:

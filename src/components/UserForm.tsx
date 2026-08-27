@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 
 type UserFormProps = {
   action: (prevState: ActionState, formData: FormData) => Promise<ActionState>;
-  defaultValues?: { email: string; name: string };
+  defaultValues?: { email: string; firstName: string; lastName: string };
   submitLabel?: string;
 };
 
@@ -34,18 +34,34 @@ export function UserForm({ action, defaultValues, submitLabel = "Dodaj" }: UserF
         )}
       </div>
       <div className="grid gap-1.5">
-        <Label htmlFor="name">Nazwa</Label>
+        <Label htmlFor="firstName">Imię</Label>
         <Input
-          id="name"
-          name="name"
+          id="firstName"
+          name="firstName"
           type="text"
-          defaultValue={defaultValues?.name}
-          aria-invalid={Boolean(state.fieldErrors?.name)}
+          defaultValue={defaultValues?.firstName}
+          aria-invalid={Boolean(state.fieldErrors?.firstName)}
           required
         />
-        {state.fieldErrors?.name && (
+        {state.fieldErrors?.firstName && (
           <p role="alert" className="text-sm text-destructive">
-            {state.fieldErrors.name}
+            {state.fieldErrors.firstName}
+          </p>
+        )}
+      </div>
+      <div className="grid gap-1.5">
+        <Label htmlFor="lastName">Nazwisko</Label>
+        <Input
+          id="lastName"
+          name="lastName"
+          type="text"
+          defaultValue={defaultValues?.lastName}
+          aria-invalid={Boolean(state.fieldErrors?.lastName)}
+          required
+        />
+        {state.fieldErrors?.lastName && (
+          <p role="alert" className="text-sm text-destructive">
+            {state.fieldErrors.lastName}
           </p>
         )}
       </div>

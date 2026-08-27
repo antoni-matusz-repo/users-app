@@ -21,6 +21,8 @@ describe("getUsers", () => {
       data: {
         email: "old@example.com",
         name: "Old User",
+        firstName: "Old",
+        lastName: "User",
         createdAt: new Date("2026-01-01T00:00:00Z"),
       },
     });
@@ -28,6 +30,8 @@ describe("getUsers", () => {
       data: {
         email: "new@example.com",
         name: "New User",
+        firstName: "New",
+        lastName: "User",
         createdAt: new Date("2026-06-01T00:00:00Z"),
       },
     });

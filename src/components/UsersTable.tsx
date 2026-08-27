@@ -13,7 +13,8 @@ import {
 export type UserRow = {
   id: string;
   email: string;
-  name: string;
+  firstName: string;
+  lastName: string;
   createdAt: Date;
 };
 
@@ -28,7 +29,7 @@ export function UsersTable({ users }: { users: UserRow[] }) {
         <TableHeader>
           <TableRow>
             <TableHead>Email</TableHead>
-            <TableHead>Nazwa</TableHead>
+            <TableHead>Imię i nazwisko</TableHead>
             <TableHead>Data utworzenia</TableHead>
             <TableHead className="text-right">Akcje</TableHead>
           </TableRow>
@@ -37,7 +38,9 @@ export function UsersTable({ users }: { users: UserRow[] }) {
           {users.map((user) => (
             <TableRow key={user.id}>
               <TableCell className="font-medium">{user.email}</TableCell>
-              <TableCell>{user.name}</TableCell>
+              <TableCell>
+                {user.firstName} {user.lastName}
+              </TableCell>
               <TableCell className="text-muted-foreground">
                 {user.createdAt.toLocaleString("pl-PL")}
               </TableCell>
@@ -48,7 +51,7 @@ export function UsersTable({ users }: { users: UserRow[] }) {
                 >
                   Edytuj
                 </Link>
-                <DeleteUserButton id={user.id} name={user.name} />
+                <DeleteUserButton id={user.id} name={`${user.firstName} ${user.lastName}`} />
               </TableCell>
             </TableRow>
           ))}

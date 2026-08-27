@@ -10,7 +10,8 @@ import { userSchema, type ActionState } from "@/lib/validation/user";
 function parseUserFormData(formData: FormData) {
   return userSchema.safeParse({
     email: formData.get("email"),
-    name: formData.get("name"),
+    firstName: formData.get("firstName"),
+    lastName: formData.get("lastName"),
   });
 }
 
@@ -25,13 +26,22 @@ export async function createUserWith(
     return {
       fieldErrors: {
         email: fieldErrors.email?.[0],
-        name: fieldErrors.name?.[0],
+        firstName: fieldErrors.firstName?.[0],
+        lastName: fieldErrors.lastName?.[0],
       },
     };
   }
 
   try {
-    await client.user.create({ data: parsed.data });
+    await client.user.create({
+      data: {
+        ...parsed.data,
+        // Better Auth wymaga "name" na bazowym modelu User — liczymy je
+        // z firstName/lastName, ale to firstName/lastName są tu realnymi
+        // polami; "name" nie jest nigdzie w naszym UI wyświetlane.
+        name: `${parsed.data.firstName} ${parsed.data.lastName}`,
+      },
+    });
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
       return { fieldErrors: { email: "Ten email jest już zajęty." } };
@@ -67,13 +77,20 @@ export async function updateUserWith(
     return {
       fieldErrors: {
         email: fieldErrors.email?.[0],
-        name: fieldErrors.name?.[0],
+        firstName: fieldErrors.firstName?.[0],
+        lastName: fieldErrors.lastName?.[0],
       },
     };
   }
 
   try {
-    await client.user.update({ where: { id }, data: parsed.data });
+    await client.user.update({
+      where: { id },
+      data: {
+        ...parsed.data,
+        name: `${parsed.data.firstName} ${parsed.data.lastName}`,
+      },
+    });
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === "P2002") {

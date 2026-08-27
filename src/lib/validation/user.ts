@@ -6,7 +6,8 @@ export const userSchema = z.object({
     .trim()
     .min(1, "Email jest wymagany.")
     .pipe(z.email("Nieprawidłowy format emaila.")),
-  name: z.string().trim().min(1, "Nazwa jest wymagana."),
+  firstName: z.string().trim().min(1, "Imię jest wymagane."),
+  lastName: z.string().trim().min(1, "Nazwisko jest wymagane."),
 });
 
 export type UserFormValues = z.infer<typeof userSchema>;
@@ -15,6 +16,7 @@ export type ActionState = {
   error?: string;
   fieldErrors?: {
     email?: string;
-    name?: string;
+    firstName?: string;
+    lastName?: string;
   };
 };

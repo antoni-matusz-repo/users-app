@@ -14,6 +14,12 @@ function formDataOf(values: Record<string, string>) {
   return formData;
 }
 
+function rawUser(overrides: { email: string; firstName?: string; lastName?: string }) {
+  const firstName = overrides.firstName ?? "Alice";
+  const lastName = overrides.lastName ?? "Kowalska";
+  return { email: overrides.email, firstName, lastName, name: `${firstName} ${lastName}` };
+}
+
 describe("createUserWith", () => {
   beforeEach(async () => {
     await testPrisma.user.deleteMany();
@@ -27,41 +33,45 @@ describe("createUserWith", () => {
   it("tworzy użytkownika przy poprawnych danych", async () => {
     const result = await createUserWith(
       testPrisma,
-      formDataOf({ email: "alice@example.com", name: "Alice" }),
+      formDataOf({ email: "alice@example.com", firstName: "Alice", lastName: "Kowalska" }),
     );
 
     expect(result).toEqual({});
     const users = await testPrisma.user.findMany();
     expect(users).toHaveLength(1);
-    expect(users[0]).toMatchObject({ email: "alice@example.com", name: "Alice" });
+    expect(users[0]).toMatchObject({
+      email: "alice@example.com",
+      firstName: "Alice",
+      lastName: "Kowalska",
+    });
   });
 
   it("zwraca błąd walidacji przy niepoprawnym emailu i nie zapisuje rekordu", async () => {
     const result = await createUserWith(
       testPrisma,
-      formDataOf({ email: "not-an-email", name: "Alice" }),
+      formDataOf({ email: "not-an-email", firstName: "Alice", lastName: "Kowalska" }),
     );
 
     expect(result.fieldErrors?.email).toBe("Nieprawidłowy format emaila.");
     expect(await testPrisma.user.count()).toBe(0);
   });
 
-  it("zwraca błąd walidacji przy pustej nazwie i nie zapisuje rekordu", async () => {
+  it("zwraca błąd walidacji przy pustym imieniu i nie zapisuje rekordu", async () => {
     const result = await createUserWith(
       testPrisma,
-      formDataOf({ email: "alice@example.com", name: "" }),
+      formDataOf({ email: "alice@example.com", firstName: "", lastName: "Kowalska" }),
     );
 
-    expect(result.fieldErrors?.name).toBe("Nazwa jest wymagana.");
+    expect(result.fieldErrors?.firstName).toBe("Imię jest wymagane.");
     expect(await testPrisma.user.count()).toBe(0);
   });
 
   it("zwraca czytelny błąd przy próbie dodania zajętego emaila, nie crashuje", async () => {
-    await testPrisma.user.create({ data: { email: "alice@example.com", name: "Alice" } });
+    await testPrisma.user.create({ data: rawUser({ email: "alice@example.com" }) });
 
     const result = await createUserWith(
       testPrisma,
-      formDataOf({ email: "alice@example.com", name: "Inna Alice" }),
+      formDataOf({ email: "alice@example.com", firstName: "Inna", lastName: "Alice" }),
     );
 
     expect(result.fieldErrors?.email).toBe("Ten email jest już zajęty.");
@@ -80,30 +90,30 @@ describe("updateUserWith", () => {
   });
 
   it("aktualizuje użytkownika przy poprawnych danych", async () => {
-    const user = await testPrisma.user.create({
-      data: { email: "alice@example.com", name: "Alice" },
-    });
+    const user = await testPrisma.user.create({ data: rawUser({ email: "alice@example.com" }) });
 
     const result = await updateUserWith(
       testPrisma,
       user.id,
-      formDataOf({ email: "alice.new@example.com", name: "Alice Nowak" }),
+      formDataOf({ email: "alice.new@example.com", firstName: "Alice", lastName: "Nowak" }),
     );
 
     expect(result).toEqual({});
     const updated = await testPrisma.user.findUniqueOrThrow({ where: { id: user.id } });
-    expect(updated).toMatchObject({ email: "alice.new@example.com", name: "Alice Nowak" });
+    expect(updated).toMatchObject({
+      email: "alice.new@example.com",
+      firstName: "Alice",
+      lastName: "Nowak",
+    });
   });
 
   it("zwraca błąd walidacji przy niepoprawnym emailu i nie zapisuje zmian", async () => {
-    const user = await testPrisma.user.create({
-      data: { email: "alice@example.com", name: "Alice" },
-    });
+    const user = await testPrisma.user.create({ data: rawUser({ email: "alice@example.com" }) });
 
     const result = await updateUserWith(
       testPrisma,
       user.id,
-      formDataOf({ email: "not-an-email", name: "Alice" }),
+      formDataOf({ email: "not-an-email", firstName: "Alice", lastName: "Kowalska" }),
     );
 
     expect(result.fieldErrors?.email).toBe("Nieprawidłowy format emaila.");
@@ -111,32 +121,32 @@ describe("updateUserWith", () => {
     expect(unchanged.email).toBe("alice@example.com");
   });
 
-  it("zwraca błąd walidacji przy pustej nazwie i nie zapisuje zmian", async () => {
-    const user = await testPrisma.user.create({
-      data: { email: "alice@example.com", name: "Alice" },
-    });
+  it("zwraca błąd walidacji przy pustym nazwisku i nie zapisuje zmian", async () => {
+    const user = await testPrisma.user.create({ data: rawUser({ email: "alice@example.com" }) });
 
     const result = await updateUserWith(
       testPrisma,
       user.id,
-      formDataOf({ email: "alice@example.com", name: "" }),
+      formDataOf({ email: "alice@example.com", firstName: "Alice", lastName: "" }),
     );
 
-    expect(result.fieldErrors?.name).toBe("Nazwa jest wymagana.");
+    expect(result.fieldErrors?.lastName).toBe("Nazwisko jest wymagane.");
     const unchanged = await testPrisma.user.findUniqueOrThrow({ where: { id: user.id } });
-    expect(unchanged.name).toBe("Alice");
+    expect(unchanged.lastName).toBe("Kowalska");
   });
 
   it("zwraca czytelny błąd przy próbie zmiany emaila na zajęty przez innego użytkownika", async () => {
-    await testPrisma.user.create({ data: { email: "bob@example.com", name: "Bob" } });
+    await testPrisma.user.create({
+      data: rawUser({ email: "bob@example.com", firstName: "Bob", lastName: "Nowak" }),
+    });
     const alice = await testPrisma.user.create({
-      data: { email: "alice@example.com", name: "Alice" },
+      data: rawUser({ email: "alice@example.com" }),
     });
 
     const result = await updateUserWith(
       testPrisma,
       alice.id,
-      formDataOf({ email: "bob@example.com", name: "Alice" }),
+      formDataOf({ email: "bob@example.com", firstName: "Alice", lastName: "Kowalska" }),
     );
 
     expect(result.fieldErrors?.email).toBe("Ten email jest już zajęty.");
@@ -145,26 +155,24 @@ describe("updateUserWith", () => {
   });
 
   it("pozwala zapisać z niezmienionym (własnym) emailem bez fałszywego błędu", async () => {
-    const user = await testPrisma.user.create({
-      data: { email: "alice@example.com", name: "Alice" },
-    });
+    const user = await testPrisma.user.create({ data: rawUser({ email: "alice@example.com" }) });
 
     const result = await updateUserWith(
       testPrisma,
       user.id,
-      formDataOf({ email: "alice@example.com", name: "Alice Nowak" }),
+      formDataOf({ email: "alice@example.com", firstName: "Alice", lastName: "Nowak" }),
     );
 
     expect(result).toEqual({});
     const updated = await testPrisma.user.findUniqueOrThrow({ where: { id: user.id } });
-    expect(updated).toMatchObject({ email: "alice@example.com", name: "Alice Nowak" });
+    expect(updated).toMatchObject({ email: "alice@example.com", lastName: "Nowak" });
   });
 
   it("zwraca czytelny błąd przy próbie edycji nieistniejącego użytkownika, nie crashuje", async () => {
     const result = await updateUserWith(
       testPrisma,
       "nieistniejace-id",
-      formDataOf({ email: "alice@example.com", name: "Alice" }),
+      formDataOf({ email: "alice@example.com", firstName: "Alice", lastName: "Kowalska" }),
     );
 
     expect(result.error).toBe("Ten użytkownik już nie istnieje (mógł zostać usunięty).");
@@ -182,9 +190,7 @@ describe("deleteUserWith", () => {
   });
 
   it("usuwa istniejącego użytkownika", async () => {
-    const user = await testPrisma.user.create({
-      data: { email: "alice@example.com", name: "Alice" },
-    });
+    const user = await testPrisma.user.create({ data: rawUser({ email: "alice@example.com" }) });
 
     const result = await deleteUserWith(testPrisma, user.id);
 
@@ -199,10 +205,10 @@ describe("deleteUserWith", () => {
   });
 
   it("nie rusza innych rekordów przy usuwaniu jednego użytkownika", async () => {
-    const alice = await testPrisma.user.create({
-      data: { email: "alice@example.com", name: "Alice" },
+    const alice = await testPrisma.user.create({ data: rawUser({ email: "alice@example.com" }) });
+    await testPrisma.user.create({
+      data: rawUser({ email: "bob@example.com", firstName: "Bob", lastName: "Nowak" }),
     });
-    await testPrisma.user.create({ data: { email: "bob@example.com", name: "Bob" } });
 
     await deleteUserWith(testPrisma, alice.id);
 

@@ -22,7 +22,7 @@ export default async function EditUserPage({ params }: PageProps<"/users/[id]/ed
       </div>
       <UserForm
         action={updateUser.bind(null, user.id)}
-        defaultValues={{ email: user.email, name: user.name }}
+        defaultValues={{ email: user.email, firstName: user.firstName, lastName: user.lastName }}
         submitLabel="Zapisz"
       />
     </main>

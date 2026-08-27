@@ -10,13 +10,15 @@ describe("UsersTable", () => {
           {
             id: "1",
             email: "alice@example.com",
-            name: "Alice Kowalska",
+            firstName: "Alice",
+            lastName: "Kowalska",
             createdAt: new Date("2026-01-01T10:00:00Z"),
           },
           {
             id: "2",
             email: "bob@example.com",
-            name: "Bob Nowak",
+            firstName: "Bob",
+            lastName: "Nowak",
             createdAt: new Date("2026-02-01T10:00:00Z"),
           },
         ]}

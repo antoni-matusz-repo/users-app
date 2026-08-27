@@ -3,13 +3,14 @@ import { render, screen } from "@testing-library/react";
 import { UserForm } from "@/components/UserForm";
 
 describe("UserForm", () => {
-  it("renderuje pola email i nazwa oraz przycisk z etykietą", () => {
+  it("renderuje pola email, imię, nazwisko oraz przycisk z etykietą", () => {
     const action = vi.fn().mockResolvedValue({});
 
     render(<UserForm action={action} submitLabel="Dodaj" />);
 
     expect(screen.getByLabelText("Email")).toBeInTheDocument();
-    expect(screen.getByLabelText("Nazwa")).toBeInTheDocument();
+    expect(screen.getByLabelText("Imię")).toBeInTheDocument();
+    expect(screen.getByLabelText("Nazwisko")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Dodaj" })).toBeInTheDocument();
   });
 
@@ -19,12 +20,13 @@ describe("UserForm", () => {
     render(
       <UserForm
         action={action}
-        defaultValues={{ email: "alice@example.com", name: "Alice" }}
+        defaultValues={{ email: "alice@example.com", firstName: "Alice", lastName: "Kowalska" }}
         submitLabel="Zapisz"
       />,
     );
 
     expect(screen.getByLabelText("Email")).toHaveValue("alice@example.com");
-    expect(screen.getByLabelText("Nazwa")).toHaveValue("Alice");
+    expect(screen.getByLabelText("Imię")).toHaveValue("Alice");
+    expect(screen.getByLabelText("Nazwisko")).toHaveValue("Kowalska");
   });
 });
